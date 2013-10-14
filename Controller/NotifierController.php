@@ -2,10 +2,9 @@
 
 namespace Fp\JsErrorNotifierBundle\Controller;
 
-use Assetic\Asset\AssetCollection;
-use Assetic\Asset\FileAsset;
 use Fp\BadaBoomBundle\ExceptionCatcher\ExceptionCatcher;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -23,8 +22,6 @@ Message: %5$s';
 
     public function sendNotifyAction(Request $request)
     {
-        $domain = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'jsnotification.com';
-
         $text = sprintf($this->email_text,
             $request->get('userAgent'),
             $request->get('url'),
@@ -33,22 +30,25 @@ Message: %5$s';
             $request->get('msg')
         );
 
-        /** @var ExceptionCatcher $badaboom */
-        $badaboom = null;//$this->get('fp_badaboom.exception_catcher');
-        $emails = (array) $this->container->getParameter('fp_js_error_notifier.emails');
-
-        if (null !== $badaboom) {
+        try {
+            /** @var ExceptionCatcher $badaboom */
+            $badaboom = $this->get('fp_badaboom.exception_catcher');
             $e = new \Exception($text);
             $badaboom->handleException($e);
-        } elseif (!empty($emails)) {
+        } catch (ServiceNotFoundException $e) {
+            $from = $this->container->getParameter('fp_js_error_notifier.email_from');
+            $to = (array) $this->container->getParameter('fp_js_error_notifier.email_to');
+
+            if (empty($to)) {
+                throw new \Exception('Can not send the notification to a specified email. You have to configure FpJsErrorNotifier bundle or enable BadaBoom bundle');
+            }
+
             $message = \Swift_Message::newInstance()
-                 ->setSubject($this->email_suject)
-                 ->setFrom('noreply@'.$domain)
-                 ->setTo($emails)
-                 ->setBody($text);
+                ->setSubject($this->email_suject)
+                ->setFrom($from)
+                ->setTo($to)
+                ->setBody($text);
             $this->get('mailer')->send($message);
-        } else {
-            throw new \Exception('Can not send the notification to a specified email. You have to configure FpJsErrorNotifier bundle or enable BadaBoom bundle');
         }
 
         return new JsonResponse();

@@ -58,14 +58,12 @@ fp_js_error_notifier:
     resource: "@FpJsErrorNotifierBundle/Resources/config/routing.xml"
 ```
 
-### Step 5. Add Javascript to your layout into top of <head> tag
-for Twig
+### Step 5. Add Javascript to your layout
+
 ``` twig
-{% include 'FpJsErrorNotifierBundle::fpJsErrorNotifier.html.twig' %}
-```
-or for PHP
-``` php
-<?php echo $view->render('FpJsErrorNotifierBundle::fpJsErrorNotifier.html.php') ?>
+{% javascripts '@FpJsErrorNotifierBundle/Resources/public/js/jsErrorNotifier.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+{% endjavascripts %}
 ```
 
 ### Step 6: Configure the FpJsErrorNotifierBundle
@@ -76,5 +74,6 @@ Otherwise you have to add some configurations for this bundle:
 ``` yaml
 # app/config/config.yml
 fp_js_error_notifier:
-    emails: ['john@example.com'] # list of recipients notification
+    email_from: 'noreply@test.com' # sender email
+    email_to: ['john@example.com'] # list of recipients notification
 ```

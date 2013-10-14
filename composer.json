@@ -1,14 +1,18 @@
 {
     "name": "fp/jserrornotifier-bundle",
     "type": "symfony-bundle",
-    "description": "javascript errors notifier",
+    "description": "Javascript errors notifier",
     "keywords": ["Javascript", "Error", "Notification"],
     "homepage": "https://github.com/formapro/FpBadaBoomBundle",
     "license": "MIT",
     "authors": [
         {
             "name": "Yury Maltsev",
-            "email": "dev.yury.maltsev@gmail.com"
+            "email": "dev.ymalcev@gmail.com"
+        },
+        {
+            "name": "Ton",
+            "email": "forma@66ton99.org.ua"
         }
     ],
 
@@ -33,7 +37,7 @@
 
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.0"
         }
     }
 }
