@@ -2,7 +2,14 @@
  * Created by ymaltsev on 10/10/13.
  */
 window.onerror = function (msg, file, line) {
-    var url = "/fp_js_error_notifier/";
+    var url = "/fp_js_error_notifier";
+    if (undefined !== window.fpErrorNotifierURL) {
+        url = window.fpErrorNotifierURL;
+    }
+
+    if (null == window.fpErrorNotifierImage) {
+        window.fpErrorNotifierImage = new Image();
+    }
 
     var xmlhttp;
     if (window.XMLHttpRequest) {
@@ -31,10 +38,15 @@ window.onerror = function (msg, file, line) {
             }
         }
 
-        xmlhttp.open("POST", url, true);
-        xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xmlhttp.send(paramsString);
+        try {
+            xmlhttp.open("POST", url, true);
+            xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xmlhttp.send(paramsString);
+
+            return true;
+        } catch (e) {}
     }
 
+    window.fpErrorNotifierImage.src = url + "?" + paramsString;
     return true;
 };

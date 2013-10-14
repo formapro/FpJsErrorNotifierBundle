@@ -22,10 +22,8 @@ class FpJsErrorNotifierExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter($this->getAlias() . '.emails', $config['emails']);
-
-        //$loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        //$loader->load('services.xml');
+        $container->setParameter($this->getAlias() . '.email_to',   $config['email_to']);
+        $container->setParameter($this->getAlias() . '.email_from', $config['email_from']);
     }
 
     public function getAlias()
